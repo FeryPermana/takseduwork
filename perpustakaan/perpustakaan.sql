@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Waktu pembuatan: 19 Agu 2023 pada 09.43
+-- Waktu pembuatan: 19 Agu 2023 pada 10.02
 -- Versi server: 10.8.3-MariaDB-log
 -- Versi PHP: 8.1.8
 
@@ -24,33 +24,15 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `anggota`
---
-
-CREATE TABLE `anggota` (
-  `id` int(11) NOT NULL,
-  `nama` varchar(255) DEFAULT NULL,
-  `alamat` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data untuk tabel `anggota`
---
-
-INSERT INTO `anggota` (`id`, `nama`, `alamat`) VALUES
-(1, 'Ferry', 'Wedomartani\r\n'),
-(2, 'Adi A', 'Bengkulu');
-
--- --------------------------------------------------------
-
---
 -- Struktur dari tabel `buku`
 --
 
 CREATE TABLE `buku` (
   `id` int(11) NOT NULL,
-  `judul` varchar(255) DEFAULT NULL,
-  `pengarang` varchar(255) DEFAULT NULL,
+  `judul` varchar(255) NOT NULL,
+  `pengarang_id` int(11) DEFAULT NULL,
+  `penerbit_id` int(11) DEFAULT NULL,
+  `katalog_id` int(11) DEFAULT NULL,
   `tahun_terbit` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -58,76 +40,124 @@ CREATE TABLE `buku` (
 -- Dumping data untuk tabel `buku`
 --
 
-INSERT INTO `buku` (`id`, `judul`, `pengarang`, `tahun_terbit`) VALUES
-(1, 'Buku 1', 'Pengarang 1', 2012),
-(2, 'Buku 2', 'Pengarang 2', 2022);
+INSERT INTO `buku` (`id`, `judul`, `pengarang_id`, `penerbit_id`, `katalog_id`, `tahun_terbit`) VALUES
+(1, 'buku 1', 1, 1, 1, 2012),
+(2, 'Buku 2', 2, 2, 2, 2022);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pinjaman`
+-- Struktur dari tabel `katalog`
 --
 
-CREATE TABLE `pinjaman` (
+CREATE TABLE `katalog` (
   `id` int(11) NOT NULL,
-  `anggota_id` int(11) DEFAULT NULL,
-  `buku_id` int(11) DEFAULT NULL,
-  `tanggal_pinjam` date DEFAULT NULL,
-  `tanggal_kembali` date DEFAULT NULL
+  `nama` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `pinjaman`
+-- Dumping data untuk tabel `katalog`
 --
 
-INSERT INTO `pinjaman` (`id`, `anggota_id`, `buku_id`, `tanggal_pinjam`, `tanggal_kembali`) VALUES
-(1, 2, 1, '2023-08-19', '2023-08-31'),
-(2, 1, 2, '2023-08-18', '2023-08-28');
+INSERT INTO `katalog` (`id`, `nama`) VALUES
+(1, 'Pengembangan Diri'),
+(2, 'Ilmu Pengetahuan');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `penerbit`
+--
+
+CREATE TABLE `penerbit` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `penerbit`
+--
+
+INSERT INTO `penerbit` (`id`, `nama`) VALUES
+(1, 'Penerbit 1'),
+(2, 'Penerbit 2');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `pengarang`
+--
+
+CREATE TABLE `pengarang` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `pengarang`
+--
+
+INSERT INTO `pengarang` (`id`, `nama`) VALUES
+(1, 'Pengarang 1'),
+(2, 'Pengarang 2');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indeks untuk tabel `anggota`
---
-ALTER TABLE `anggota`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indeks untuk tabel `buku`
 --
 ALTER TABLE `buku`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pengarang_id` (`pengarang_id`),
+  ADD KEY `penerbit_id` (`penerbit_id`),
+  ADD KEY `katalog_id` (`katalog_id`);
+
+--
+-- Indeks untuk tabel `katalog`
+--
+ALTER TABLE `katalog`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `pinjaman`
+-- Indeks untuk tabel `penerbit`
 --
-ALTER TABLE `pinjaman`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `anggota_id` (`anggota_id`),
-  ADD KEY `buku_id` (`buku_id`);
+ALTER TABLE `penerbit`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `pengarang`
+--
+ALTER TABLE `pengarang`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT untuk tabel `anggota`
---
-ALTER TABLE `anggota`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
 -- AUTO_INCREMENT untuk tabel `buku`
 --
 ALTER TABLE `buku`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT untuk tabel `katalog`
+--
+ALTER TABLE `katalog`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `pinjaman`
+-- AUTO_INCREMENT untuk tabel `penerbit`
 --
-ALTER TABLE `pinjaman`
+ALTER TABLE `penerbit`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT untuk tabel `pengarang`
+--
+ALTER TABLE `pengarang`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
@@ -135,11 +165,12 @@ ALTER TABLE `pinjaman`
 --
 
 --
--- Ketidakleluasaan untuk tabel `pinjaman`
+-- Ketidakleluasaan untuk tabel `buku`
 --
-ALTER TABLE `pinjaman`
-  ADD CONSTRAINT `pinjaman_ibfk_1` FOREIGN KEY (`anggota_id`) REFERENCES `anggota` (`id`),
-  ADD CONSTRAINT `pinjaman_ibfk_2` FOREIGN KEY (`buku_id`) REFERENCES `buku` (`id`);
+ALTER TABLE `buku`
+  ADD CONSTRAINT `buku_ibfk_1` FOREIGN KEY (`pengarang_id`) REFERENCES `pengarang` (`id`),
+  ADD CONSTRAINT `buku_ibfk_2` FOREIGN KEY (`penerbit_id`) REFERENCES `penerbit` (`id`),
+  ADD CONSTRAINT `buku_ibfk_3` FOREIGN KEY (`katalog_id`) REFERENCES `katalog` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
